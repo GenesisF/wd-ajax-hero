@@ -57,4 +57,37 @@
   };
 
   // ADD YOUR CODE HERE
+  const input = document.querySelector('#search');
+
+  document.querySelector('form').addEventListener('submit', function(event) {
+    
+    event.preventDefault();
+    
+    const val = input.value.trim();
+
+    if(val === ''){
+      return;
+    }
+    
+    fetch(`https://omdb-api.now.sh/?s=${encodeURIComponent(val)}`,{method:"GET"})
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        const results = data.Search;
+
+        movies.splice(0, movies.length, ...results.map(result => ({
+          id: result.imdbID,
+          poster: result.Poster === 'N/A' ? 'https://place-hold.it/300x445' : result.Poster,
+          title: result.Title,
+          year: result.Year
+        })));
+
+        renderMovies();
+
+      })
+      .catch(err => console.error(err));
+
+
+  });
+
 })();
